@@ -1,0 +1,14 @@
+﻿<Properties>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\playerGrowth.cs">
+    <Files>
+      <File FileName="Assets\playerGrowth.cs" Line="43" Column="55" />
+      <File FileName="Assets\sponCubes.cs" Line="15" Column="27" />
+      <File FileName="Assets\palyerMovement.cs" Line="51" Column="3" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+</Properties>
