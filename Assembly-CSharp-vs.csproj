@@ -46,11 +46,14 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
-     <Compile Include="Assets\furitMovement.cs" />
-     <Compile Include="Assets\palyerMovement.cs" />
-     <Compile Include="Assets\playerGrowth.cs" />
-     <Compile Include="Assets\sectionalMovement.cs" />
-     <Compile Include="Assets\sponCubes.cs" />
+     <Compile Include="Assets\Scripts\PlayerMovement.cs" />
+     <Compile Include="Assets\Scripts\bodyController.cs" />
+     <Compile Include="Assets\Scripts\bodySegController.cs" />
+     <Compile Include="Assets\Scripts\createNewCube.cs" />
+     <Compile Include="Assets\Scripts\hitWall.cs" />
+     <Compile Include="Assets\Scripts\moveRandomLocation.cs" />
+     <Compile Include="Assets\Scripts\newBodyCreator.cs" />
+     <Compile Include="Assets\Scripts\snakeBodyController.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
