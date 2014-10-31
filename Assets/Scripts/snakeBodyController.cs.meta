@@ -2,7 +2,11 @@ fileFormatVersion: 2
 guid: 58f02aa6ee9653c4ba1c04f082bb99d2
 MonoImporter:
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - snakeBodyCube: {fileID: 100000, guid: a7d35026a4d3dff4494d22564c6b1e52, type: 2}
+  - snakeTailCube: {fileID: 100000, guid: a7d35026a4d3dff4494d22564c6b1e52, type: 2}
+  - player: {fileID: 100004, guid: 1fe9cafc2648bf5479678d6bebab821a, type: 2}
+  - playerTransform: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

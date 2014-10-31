@@ -7,8 +7,8 @@ public class bodySegController : MonoBehaviour
 
 		ArrayList nextTurns = new ArrayList ();
 		public Transform myTransform;
-		public GameObject frontObject;
-		public GameObject rearObject;
+		public GameObject *frontObject;
+		public GameObject *rearObject;
 		public float myX, myY, myZ;
 		// Use this for initialization
 		void Start ()

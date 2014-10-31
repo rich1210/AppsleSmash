@@ -29,7 +29,7 @@ public class PlayerMovement : MonoBehaviour
 				hitSnake = false;
 	
 		public int direction = 0;
-		public float hoverHieght = .4f;
+		public float hoverHieght = .3f;
 	
 	
 		Vector3 pos; 
@@ -109,7 +109,9 @@ public class PlayerMovement : MonoBehaviour
 // MORE OF A JUMP - TO FUNCTION, USED FOR RESET FUNCTION
 		void moveTo (float x, float y, float z)
 		{
+				// this function rotates the player to look at the north wall (all in one line!!!!)
 				transform.rotation = Quaternion.LookRotation (Vector3.forward);
+				// adjust in case you're not on an integer
 				adjustMotion ();
 				// get current position
 				Vector3 pos = transform.position;
@@ -289,48 +291,66 @@ public class PlayerMovement : MonoBehaviour
 				float screenWUnit = Screen.width / 50;
 				float screenHUnit = Screen.height / 50;
 				// IF GAME IS OVER, Display message
-				if (speed == 0) {
-						GUI.Box (new Rect (screenWUnit * 15, screenHUnit * 10, screenWUnit * 20, screenHUnit * 15), "<b><size=25><color=black> YOU HIT A WALL - GAME OVER</color></size></b>");
-						if (GUI.Button (new Rect (screenWUnit * 18, screenHUnit * 14, screenWUnit * 14, screenHUnit * 10), "<size=20>TAP HERE TO RESET</size>")) {
+				if (speed == 0 && hitWall) {
+						GUI.Box (new Rect (screenWUnit * 15, screenHUnit * 10, screenWUnit * 20, screenHUnit * 15), "<b><size=15><color=black> YOU HIT A WALL - GAME OVER</color></size></b>");
+						if (GUI.Button (new Rect (screenWUnit * 18, screenHUnit * 14, screenWUnit * 14, screenHUnit * 10), "<size=15>TAP HERE TO RESET</size>")) {
 								reset ();
 						
 						}
 			   
-				}
-				// TURN LEFT!!!!!!!!!
-				if (GUI.Button (new Rect (0, 0, Screen.width / 8, Screen.height / 8), leftIcon)) {
-						// if not currently turning
-						if (turn == false) {
-								// set turn left to true
-								leftTurn = true;
-								// set right to false
-								rightTurn = false;
-						}
-				}
-				// TURN RIGHT!!!!!!
-				if (GUI.Button (new Rect (Screen.width - Screen.width / 8, 0, Screen.width / 8, Screen.height / 8), rightIcon)) {
-						if (turn == false) {
-								// set right to true
-								rightTurn = true;
-								// set left to false if its true
-								leftTurn = false;
-						}
-				}
-				// REPEAT BUTTON FOR CONTINUAL BOOSTING
-				if ((GUI.RepeatButton (new Rect (0, screenHUnit * 40, screenWUnit * 10, screenHUnit * 15), "SPEED BOOST")) ||
-						(GUI.RepeatButton (new Rect (screenWUnit * 41, screenHUnit * 40, screenWUnit * 10, screenHUnit * 15), "SPEED BOOST")
+				} 
+				// Display Pause Menu if speed is 0, but haven't hit a wall or player
+				else if (speed == 0 && !hitWall) {
+						GUI.Box (new Rect (screenWUnit * 15, screenHUnit * 10, screenWUnit * 20, screenHUnit * 30), "<b><size=15><color=black> PAUSED </color></size></b>");
+						if (GUI.Button (new Rect (screenWUnit * 18, screenHUnit * 14, screenWUnit * 14, screenHUnit * 10), "<size=15>TAP HERE TO RESET</size>")) {
+								reset ();
 				
-						) && !hitWall) {
-						speed = 5;
-		
+						} else if (GUI.Button (new Rect (screenWUnit * 18, screenHUnit * 28, screenWUnit * 14, screenHUnit * 10), "<size=15>TAP HERE TO CONTINUE</size>")) {
+								speed = 2;
+							
+						}
 				} 
-				// IF DEAD, SPEED SHOULD BE 0
-				else if (hitWall) {
-						speed = 0;
-				} 
-				// RESET THE SPEED IF NOT PRESSING BUTTON & NOT DEAD
+				// OTHERWISE - Normal Game operation, ALL THE BUTTONS!!!!!!!!!!!!!!!!!!!!!!!!
 				else {
-						speed = 2;
-				}	
+						// PAUSE BUTTON
+						if (GUI.Button (new Rect (Screen.width / 2 - Screen.width / 16, screenHUnit * 48, Screen.width / 8, Screen.height / 8), "Pause")) {
+								speed = 0;
+						}
+					// TURN LEFT!!!!!!!!!
+					else if (GUI.Button (new Rect (0, 0, Screen.width / 8, Screen.height / 8), leftIcon)) {
+								// if not currently turning
+								if (turn == false) {
+										// set turn left to true
+										leftTurn = true;
+										// set right to false
+										rightTurn = false;
+								}
+						}
+					// TURN RIGHT!!!!!!
+					else if (GUI.Button (new Rect (Screen.width - Screen.width / 8, 0, Screen.width / 8, Screen.height / 8), rightIcon)) {
+								if (turn == false) {
+										// set right to true
+										rightTurn = true;
+										// set left to false if its true
+										leftTurn = false;
+								}
+						}
+					// REPEAT BUTTON FOR CONTINUAL BOOSTING
+					else if ((GUI.RepeatButton (new Rect (0, screenHUnit * 40, screenWUnit * 10, screenHUnit * 15), "SPEED BOOST")) ||
+								(GUI.RepeatButton (new Rect (screenWUnit * 43, screenHUnit * 40, screenWUnit * 10, screenHUnit * 15), "SPEED BOOST")
+					
+							) && !hitWall) {
+								speed = 5;
+			
+						} 
+					// IF DEAD, SPEED SHOULD BE 0
+					else if (hitWall) {
+								speed = 0;
+						} 
+					// RESET THE SPEED IF NOT PRESSING BUTTON & NOT DEAD
+					else {
+								speed = 2;
+						}	
+				}
 		}
 }
