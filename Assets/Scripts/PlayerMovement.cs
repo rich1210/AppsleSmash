@@ -43,7 +43,7 @@ public class PlayerMovement : MonoBehaviour
 		// Update is called once per frame
 		void Update ()
 		{
-		
+// SHOULD I BE TURNING?		
 				// Get PLAYER position
 				pos = transform.position;
 				// Determine if PLAYER wants to turn, and TURN is off
@@ -60,6 +60,7 @@ public class PlayerMovement : MonoBehaviour
 		else if (!(leftTurn || rightTurn)) {
 						turn = false;
 				}
+// TURNING
 				// DETERMINE IF PLAYER WANTS TO TURN
 				if (leftTurn && turn) {
 						// increment the rotation counter
@@ -80,11 +81,13 @@ public class PlayerMovement : MonoBehaviour
 						if (endTurnCheck ()) {
 								rightTurn = false;
 						}
-				} else {
+				}
+// NOT TURNING? -----> MOVING!!!! 
+				else {
 						transform.Translate (Vector3.forward * Time.deltaTime * speed);
 				}
 		}
-		// Check for Collision
+// YOU DIED? RESET POSITION AND FLAGS!!!!!!!!
 		void reset ()
 		{
 				// move back to initial position
@@ -103,8 +106,11 @@ public class PlayerMovement : MonoBehaviour
 		
 		
 		}
+// MORE OF A JUMP - TO FUNCTION, USED FOR RESET FUNCTION
 		void moveTo (float x, float y, float z)
 		{
+				transform.rotation = Quaternion.LookRotation (Vector3.forward);
+				adjustMotion ();
 				// get current position
 				Vector3 pos = transform.position;
 				// get xoffset
@@ -113,11 +119,12 @@ public class PlayerMovement : MonoBehaviour
 				float yOffSet = y - pos.y;
 				//get zoffset
 				float zOffSet = z - pos.z;
-				Debug.Log ("Moving position to " + xOffSet + " " + yOffSet + " " + zOffSet);
+				Debug.Log ("TRANSLATING POSITION BY " + xOffSet + " " + yOffSet + " " + zOffSet);
 				transform.Translate (xOffSet, yOffSet, zOffSet);
 				adjustMotion ();
 				
 		}
+// DETECTS ENTRY COLLISIONS (BEGINNING OF COLLISION) WITH TRIGGER OBJECTS (WALLS, APPLES, THE PLAYER)
 		void OnTriggerEnter (Collider col)
 		{
 				Vector3 pos = transform.position;
@@ -140,7 +147,7 @@ public class PlayerMovement : MonoBehaviour
 			
 				}
 		}
-
+// DETECTS EXIT COLLISIONS (NO LONGER COLLIDING) WITH TRIGGER OBJECTS (WALLS, APPLES, THE PLAYER)
 		void OnTriggerExit (Collider col)
 		{
 				if (col.gameObject.name == ("Apple")) {
@@ -148,7 +155,7 @@ public class PlayerMovement : MonoBehaviour
 						hitApple = false;
 				}
 		}	
-		// this function determins if the player can turn, and returns true if so	
+// RETURNS TRUE IF THE PLAYER IS ON AN INTEGER POSITION IN THE X AND Z (USED FOR TURNING)
 		bool canTurn ()
 		{
 				float tempx, tempz;
@@ -169,7 +176,8 @@ public class PlayerMovement : MonoBehaviour
 				return false;
 		}
 	
-		// this function returns the offset required to move the object into an integer position
+// THIS FUNCTION RETURNS A FLOAT INDICATING THE TRANSLATION REQUIRED TO MOVE AN OBJECT TO AN INTEGER POSITION
+// A CHARACTER IS PASSED TO GET THE X,Y, OR Z OFFSET
 		float getTranslation (char letter)
 		{
 				// Declare Variables
@@ -195,8 +203,8 @@ public class PlayerMovement : MonoBehaviour
 				return ret;
 		
 		}
-		// this function checks to see if the player has completed a turn, and returns true if so
-		// 		it also resets the rotation counter and turn booleans and adjusts the player position to put it on the integer grid
+// this function checks to see if the player has completed a turn, and returns true if so
+// 		it also resets the rotation counter and turn booleans and adjusts the player position to put it on the integer grid
 		bool endTurnCheck ()
 		{
 				// if the turn is complete
@@ -228,6 +236,7 @@ public class PlayerMovement : MonoBehaviour
 				// return false, the turn is not complete
 				return false;
 		}
+// THIS FUNCTION KEEPS TRACK OF THE PLAYERS DIRECTION VARIABLE
 		void changePlayerDirection (char letter)
 		{
 				if (letter == 'r') {
@@ -245,6 +254,8 @@ public class PlayerMovement : MonoBehaviour
 				}
 		
 		}
+// THIS FUNCTION MOVES THE PLAYER TO AN INTEGER POSITION IN THE DIRECTION THEY ARE TRAVELING
+// ex: moving parralel to X axis, function will move player to nearest Y integer position
 		void adjustMotion ()
 		{
 				float variation;
@@ -272,8 +283,7 @@ public class PlayerMovement : MonoBehaviour
 			
 				}
 		}
-		// this controller setup allows the player to change the next turn direction before the next turn actually occurs
-		
+// GUI WITH TURNING AND SPEED BOOST BUTTONS, AND SIMPLE GAME OVER + RESET
 		void OnGUI ()
 		{		
 				float screenWUnit = Screen.width / 50;
@@ -287,6 +297,7 @@ public class PlayerMovement : MonoBehaviour
 						}
 			   
 				}
+				// TURN LEFT!!!!!!!!!
 				if (GUI.Button (new Rect (0, 0, Screen.width / 8, Screen.height / 8), leftIcon)) {
 						// if not currently turning
 						if (turn == false) {
@@ -296,6 +307,7 @@ public class PlayerMovement : MonoBehaviour
 								rightTurn = false;
 						}
 				}
+				// TURN RIGHT!!!!!!
 				if (GUI.Button (new Rect (Screen.width - Screen.width / 8, 0, Screen.width / 8, Screen.height / 8), rightIcon)) {
 						if (turn == false) {
 								// set right to true
@@ -304,24 +316,21 @@ public class PlayerMovement : MonoBehaviour
 								leftTurn = false;
 						}
 				}
+				// REPEAT BUTTON FOR CONTINUAL BOOSTING
 				if ((GUI.RepeatButton (new Rect (0, screenHUnit * 40, screenWUnit * 10, screenHUnit * 15), "SPEED BOOST")) ||
 						(GUI.RepeatButton (new Rect (screenWUnit * 41, screenHUnit * 40, screenWUnit * 10, screenHUnit * 15), "SPEED BOOST")
 				
 						) && !hitWall) {
 						speed = 5;
 		
-				} else if (hitWall) {
+				} 
+				// IF DEAD, SPEED SHOULD BE 0
+				else if (hitWall) {
 						speed = 0;
-				} else {
+				} 
+				// RESET THE SPEED IF NOT PRESSING BUTTON & NOT DEAD
+				else {
 						speed = 2;
-				
-				}
-				
-				
-						
-				
-			
-	
-	
+				}	
 		}
 }
