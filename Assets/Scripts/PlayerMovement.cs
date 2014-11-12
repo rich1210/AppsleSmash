@@ -6,6 +6,7 @@ public class PlayerMovement : MonoBehaviour
 {
 
 		//GameObject otherObj;
+		public float defaultSpeed;
 		public float speed;
 		public int length = 1;
 		public float MAX_TOLERANCE = .03f,
@@ -20,6 +21,7 @@ public class PlayerMovement : MonoBehaviour
 		public int rotRate = 2;
 		
 		int counterRot = 0;
+		public snakeBodyController snakeBodyController;
 	
 		public bool leftTurn = false,
 				rightTurn = false,
@@ -35,7 +37,11 @@ public class PlayerMovement : MonoBehaviour
 		Vector3 pos; 
 		void Start ()
 		{
-				speed = 2;
+				defaultSpeed = 4;
+				rightTurn = true;
+				
+				snakeBodyController = GetComponentInParent<snakeBodyController> ();
+				speed = defaultSpeed;
 				adjustMotion ();
 		}
 	
@@ -43,7 +49,9 @@ public class PlayerMovement : MonoBehaviour
 		// Update is called once per frame
 		void Update ()
 		{
-// SHOULD I BE TURNING?		
+// SHOULD I BE TURNING?	
+				adjustMotion ();				
+		
 				// Get PLAYER position
 				pos = transform.position;
 				// Determine if PLAYER wants to turn, and TURN is off
@@ -52,9 +60,7 @@ public class PlayerMovement : MonoBehaviour
 						if (canTurn ()) {
 								// PLAYER wants to turn, and is in the right position to begin turning
 								turn = true;
-						} else {
-								adjustMotion ();				
-						}
+						} 
 				} 
 		// OTHERWISE, IF PLAYER DOES NOT WANT TO TURN, SET TURN TO FALSE
 		else if (!(leftTurn || rightTurn)) {
@@ -90,12 +96,13 @@ public class PlayerMovement : MonoBehaviour
 // YOU DIED? RESET POSITION AND FLAGS!!!!!!!!
 		void reset ()
 		{
+				snakeBodyController.reset ();
 				// move back to initial position
-				moveTo (2, hoverHieght, 2);
+				moveTo (12, hoverHieght, 5);
 				// set the speed to 1
-				speed = 2;
+				speed = defaultSpeed;
 				// set the length to 0
-				length = 1;
+				length = 0;
 				// reset bools
 				hitWall = false;
 				hitSnake = false;
@@ -137,12 +144,12 @@ public class PlayerMovement : MonoBehaviour
 			
 						hitWall = true;
 						speed = 0;
-				} else if (col.gameObject.name == ("Apple")) {
+				} else if (col.gameObject.name.Contains ("Apple")) {
 						Debug.Log ("Apple Collision Detected");
 						hitApple = true;
 						length++;
 				
-				} else if (col.gameObject.name == ("Player")) {
+				} else if (col.gameObject.name.Contains ("Body") && !col.gameObject.name.Contains ("#0")) {
 						Debug.Log ("Player Collision Detected GAME OVER");
 						hitSnake = true;
 						speed = 0;
@@ -153,7 +160,7 @@ public class PlayerMovement : MonoBehaviour
 		void OnTriggerExit (Collider col)
 		{
 				if (col.gameObject.name == ("Apple")) {
-						Debug.Log ("Apple Collision Exited");
+						//Debug.Log ("Apple Collision Exited");
 						hitApple = false;
 				}
 		}	
@@ -291,7 +298,14 @@ public class PlayerMovement : MonoBehaviour
 				float screenWUnit = Screen.width / 50;
 				float screenHUnit = Screen.height / 50;
 				// IF GAME IS OVER, Display message
-				if (speed == 0 && hitWall) {
+				if (speed == 0 && hitSnake) {
+						GUI.Box (new Rect (screenWUnit * 15, screenHUnit * 10, screenWUnit * 20, screenHUnit * 15), "<b><size=15><color=black> YOU HIT YOURSELF - GAME OVER</color></size></b>");
+						if (GUI.Button (new Rect (screenWUnit * 18, screenHUnit * 14, screenWUnit * 14, screenHUnit * 10), "<size=15>TAP HERE TO RESET</size>")) {
+								reset ();
+						
+						}
+					
+				} else if (speed == 0 && hitWall) {
 						GUI.Box (new Rect (screenWUnit * 15, screenHUnit * 10, screenWUnit * 20, screenHUnit * 15), "<b><size=15><color=black> YOU HIT A WALL - GAME OVER</color></size></b>");
 						if (GUI.Button (new Rect (screenWUnit * 18, screenHUnit * 14, screenWUnit * 14, screenHUnit * 10), "<size=15>TAP HERE TO RESET</size>")) {
 								reset ();
@@ -300,7 +314,7 @@ public class PlayerMovement : MonoBehaviour
 			   
 				} 
 				// Display Pause Menu if speed is 0, but haven't hit a wall or player
-				else if (speed == 0 && !hitWall) {
+				else if (speed == 0 && !hitWall && !hitSnake) {
 						GUI.Box (new Rect (screenWUnit * 15, screenHUnit * 10, screenWUnit * 20, screenHUnit * 30), "<b><size=15><color=black> PAUSED </color></size></b>");
 						if (GUI.Button (new Rect (screenWUnit * 18, screenHUnit * 14, screenWUnit * 14, screenHUnit * 10), "<size=15>TAP HERE TO RESET</size>")) {
 								reset ();
@@ -336,20 +350,20 @@ public class PlayerMovement : MonoBehaviour
 								}
 						}
 					// REPEAT BUTTON FOR CONTINUAL BOOSTING
-					else if ((GUI.RepeatButton (new Rect (0, screenHUnit * 40, screenWUnit * 10, screenHUnit * 15), "SPEED BOOST")) ||
-								(GUI.RepeatButton (new Rect (screenWUnit * 43, screenHUnit * 40, screenWUnit * 10, screenHUnit * 15), "SPEED BOOST")
-					
-							) && !hitWall) {
-								speed = 5;
-			
-						} 
+					//else if ((GUI.RepeatButton (new Rect (0, screenHUnit * 40, screenWUnit * 10, screenHUnit * 15), "SPEED BOOST")) ||
+					//			(GUI.RepeatButton (new Rect (screenWUnit * 43, screenHUnit * 40, screenWUnit * 10, screenHUnit * 15), "SPEED BOOST")
+					//
+					//		) && !hitWall) {
+					//			speed = 5;
+			///
+					//	} 
 					// IF DEAD, SPEED SHOULD BE 0
-					else if (hitWall) {
+					else if (hitWall || hitSnake) {
 								speed = 0;
 						} 
 					// RESET THE SPEED IF NOT PRESSING BUTTON & NOT DEAD
 					else {
-								speed = 2;
+								speed = defaultSpeed;
 						}	
 				}
 		}
