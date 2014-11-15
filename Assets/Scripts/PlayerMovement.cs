@@ -9,16 +9,12 @@ public class PlayerMovement : MonoBehaviour
 		public float defaultSpeed;
 		public float speed;
 		public int length = 1;
-		public float MAX_TOLERANCE = .03f,
+		public float MAX_TOLERANCE = .05f,
 				MIN_TOLERANCE = .97f;
-		public float t1, t2;		
-		public Texture2D leftIcon;
-		public Texture2D rightIcon;		
-		//public GameObject Apple; 
-		//public GameObject lastObject;
-		//public GameObject bodyCube; 
-			
-		public int rotRate = 2;
+		public float t1, t2;			
+		public GameObject controller;
+		gameController UI_controller;
+		public int rotRate = 2;		
 		
 		int counterRot = 0;
 		public snakeBodyController snakeBodyController;
@@ -28,8 +24,8 @@ public class PlayerMovement : MonoBehaviour
 				turn = false,
 				hitWall = false,
 				hitApple = false,
-				hitSnake = false;
-	
+				hitSnake = false,
+				paused = true;
 		public int direction = 0;
 		public float hoverHieght = .3f;
 	
@@ -37,12 +33,13 @@ public class PlayerMovement : MonoBehaviour
 		Vector3 pos; 
 		void Start ()
 		{
-				defaultSpeed = 4;
+				UI_controller = controller.GetComponent<gameController> () as gameController;
+				defaultSpeed = 3;
 				rightTurn = true;
-				
 				snakeBodyController = GetComponentInParent<snakeBodyController> ();
-				speed = defaultSpeed;
+				speed = 0;
 				adjustMotion ();
+				pause ();
 		}
 	
 		
@@ -51,7 +48,7 @@ public class PlayerMovement : MonoBehaviour
 		{
 // SHOULD I BE TURNING?	
 				adjustMotion ();				
-		
+				checkForAcceleration ();
 				// Get PLAYER position
 				pos = transform.position;
 				// Determine if PLAYER wants to turn, and TURN is off
@@ -93,12 +90,29 @@ public class PlayerMovement : MonoBehaviour
 						transform.Translate (Vector3.forward * Time.deltaTime * speed);
 				}
 		}
-// YOU DIED? RESET POSITION AND FLAGS!!!!!!!!
-		void reset ()
+		void checkForAcceleration ()
 		{
-				snakeBodyController.reset ();
+				if (Input.acceleration.x > 0.5f) {
+						if (!turn) {
+								rightTurn = true;
+								leftTurn = false;
+						}
+				} else if (Input.acceleration.x < -0.5) {
+						if (!turn) {
+								rightTurn = false;
+								leftTurn = true;
+						}			
+				}
+		
+		}
+// YOU DIED? RESET POSITION AND FLAGS!!!!!!!!
+		public void reset ()
+		{
+
 				// move back to initial position
 				moveTo (12, hoverHieght, 5);
+				// reset all the body segments
+				snakeBodyController.reset ();
 				// set the speed to 1
 				speed = defaultSpeed;
 				// set the length to 0
@@ -109,7 +123,8 @@ public class PlayerMovement : MonoBehaviour
 				hitApple = false;
 				turn = false;
 				leftTurn = false;
-				rightTurn = false;
+				rightTurn = true;
+				direction = 0;
 		
 		
 		}
@@ -133,6 +148,16 @@ public class PlayerMovement : MonoBehaviour
 				adjustMotion ();
 				
 		}
+		public void pause ()
+		{
+				speed = 0;
+				paused = true;
+		}
+		public void unPause ()
+		{
+				speed = defaultSpeed;
+				paused = false;
+		}
 // DETECTS ENTRY COLLISIONS (BEGINNING OF COLLISION) WITH TRIGGER OBJECTS (WALLS, APPLES, THE PLAYER)
 		void OnTriggerEnter (Collider col)
 		{
@@ -144,16 +169,16 @@ public class PlayerMovement : MonoBehaviour
 			
 						hitWall = true;
 						speed = 0;
+						UI_controller.endGame ();
+			
 				} else if (col.gameObject.name.Contains ("Apple")) {
 						Debug.Log ("Apple Collision Detected");
 						hitApple = true;
-						length++;
-				
-				} else if (col.gameObject.name.Contains ("Body") && !col.gameObject.name.Contains ("#0")) {
+				} else if (col.gameObject.name.Contains ("Body") && !col.gameObject.name.Contains ("#00") && !col.gameObject.name.Contains ("#01")) {
 						Debug.Log ("Player Collision Detected GAME OVER");
 						hitSnake = true;
 						speed = 0;
-			
+						UI_controller.endGame ();
 				}
 		}
 // DETECTS EXIT COLLISIONS (NO LONGER COLLIDING) WITH TRIGGER OBJECTS (WALLS, APPLES, THE PLAYER)
@@ -293,7 +318,7 @@ public class PlayerMovement : MonoBehaviour
 				}
 		}
 // GUI WITH TURNING AND SPEED BOOST BUTTONS, AND SIMPLE GAME OVER + RESET
-		void OnGUI ()
+		/*void OnGUI ()
 		{		
 				float screenWUnit = Screen.width / 50;
 				float screenHUnit = Screen.height / 50;
@@ -366,5 +391,5 @@ public class PlayerMovement : MonoBehaviour
 								speed = defaultSpeed;
 						}	
 				}
-		}
+		}*/
 }

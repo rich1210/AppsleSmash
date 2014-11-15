@@ -62,6 +62,9 @@ public class snakeBodyController : MonoBehaviour
 				// get the movement script
 				PlayerMovementScript = GetComponentInParent<PlayerMovement> ();
 				growSnake ();
+				growSnake ();
+				growSnake ();
+		
 		}
 		void Update ()
 		{
@@ -83,31 +86,30 @@ public class snakeBodyController : MonoBehaviour
 		{
 				// if Collision with Apple
 				if (col.gameObject.name == ("Apple")) {
-						// grow snake proportional to current length
-						if (bodySegments.Count == 0) {
-								growSnake ();
-						} else {
-								for (int i = 0; i < bodySegments.Count+1; i++) {
-										growSnake ();
-								}
-						}
-
+						growSnake ();
+						growSnake ();
+						growSnake ();
+						growSnake ();
+						growSnake ();		
 				}
 		}
 		public void reset ()
 		{
-				while (bodySegments.Count > 0) {
+				int count = bodySegments.Count;
+				while (bodySegments.Count != 0) {
 						Destroy (bodySegments [0].myCube);
 						bodySegments.RemoveAt (0);
 				}
-		
+				for (int i = 0; i < 3; i++) {
+						growSnake ();
+				}		
 		}
 		bool onGrid ()
 		{
 				//Debug.Log ("On Grid Check Function");
 				float xVariation = Mathf.Abs (playerTransform.position.x - Mathf.Round (playerTransform.position.x));
 				float zVariation = Mathf.Abs (playerTransform.position.z - Mathf.Round (playerTransform.position.z));
-				bool insideTolerance = (xVariation < .04 && zVariation < .04);
+				bool insideTolerance = (xVariation < .05 && zVariation < .05);
 				// if not inside tolerance, turn of the lock, return false
 				if (!insideTolerance) {
 						locked = false;
@@ -148,10 +150,14 @@ public class snakeBodyController : MonoBehaviour
 				// if first cube - get the position and rotation from the player transform
 				if (bodySegments.Count == 0) {
 				
-						GameObject newCube = Instantiate (headCube, playerTransform.position, playerTransform.rotation) as GameObject;
+						GameObject newCube = Instantiate (headCube, playerTransform.position - playerTransform.forward, playerTransform.rotation) as GameObject;
 						bool isTurn = PlayerMovementScript.turn;
 						float newSpeed = PlayerMovementScript.speed;
-						newCube.name = ("Body Segment #" + bodySegments.Count);
+						if (bodySegments.Count < 10) {
+								newCube.name = ("Body Segment #0" + bodySegments.Count);
+						} else {
+								newCube.name = ("Body Segment #" + bodySegments.Count);
+						}
 						bodySegments.Add (new snakeBodyType (newCube, playerTransform.position, isTurn, newSpeed));
 						bodySegments [0].setNewTarget (playerTransform.position, isTurn);
 			
@@ -172,7 +178,7 @@ public class snakeBodyController : MonoBehaviour
 				}
 				updatePositions ();
 		}
-		void OnGUI ()
+		/*void OnGUI ()
 		{		
 				float screenWUnit = Screen.width / 50;
 				float screenHUnit = Screen.height / 50;
@@ -182,7 +188,7 @@ public class snakeBodyController : MonoBehaviour
 				
 				}
 			
-		} 
+		} */
 		
 }
 	

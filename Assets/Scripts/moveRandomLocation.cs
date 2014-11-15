@@ -7,9 +7,9 @@ public class moveRandomLocation : MonoBehaviour
 
 		void OnTriggerEnter (Collider col)
 		{
-				//Debug.Log ("Collision Detected Name = " + col.gameObject.name);
-				if (col.gameObject.name == ("Player")) {
-						//Debug.Log ("Player Collision Detected Moving Apple");
+				Debug.Log ("Collision Detected Name = " + col.gameObject.name);
+				if (col.gameObject.name == ("Player") || col.gameObject.name.Contains ("Body")) {
+						Debug.Log ("Player Collision Detected Moving Apple");
 						float randy;
 						randy = Random.Range (0, 20);
 						float deltaX = randy - appleTransform.position.x;
